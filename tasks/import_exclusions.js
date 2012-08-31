@@ -1,7 +1,10 @@
 var fs = require('fs')
-  , csv = require('csv');
-
-var mongoose = require('mongoose');
+  , csv = require('csv')
+  , jsdom = require('jsdom')
+  , request = require('request')
+  , mongoose = require('mongoose')
+  , sys = require('sys')
+  , exec = require('child_process').exec;
 
 if (process.env.MONGOHQ_URL) {
   global.DB = mongoose.createConnection(process.env.MONGOHQ_URL)
@@ -11,6 +14,8 @@ if (process.env.MONGOHQ_URL) {
 
 var Exclusion = require('../models/exclusion');
 
+var dataFolder = __dirname + '/../_data/epls/';
+
 var mongooseKeyFor = function (key) {
   return key.replace(/\/|\s|-/g, '_').replace(/_+/, '_').toLowerCase();
 };
@@ -19,8 +24,6 @@ var parse = function(req, res) {
 
   // empty database
   Exclusion.collection.remove({});
-
-  var dataFolder = __dirname + '/../_data/epls/';
 
   if (process.argv.indexOf('--sample-data') !== -1) {
     console.log("++++++++ USING SAMPLE DATA ++++++++");
@@ -61,4 +64,29 @@ var parse = function(req, res) {
 
 };
 
-parse();
+jsdom.env({
+  html: 'https://www.sam.gov/public-extracts/SAM-Public/',
+  scripts: [
+    'http://code.jquery.com/jquery-1.5.min.js'
+  ],
+  done: function(errors, window) {
+    var $ = window.$;
+    var href = $('a:last').attr('href');
+    console.log("Grabbing file: https://www.sam.gov/public-extracts/SAM-Public/" + href);
+    var savedZip = fs.createWriteStream(dataFolder + 'exclusions.zip');
+    request("https://www.sam.gov/public-extracts/SAM-Public/" + href)
+    .pipe(savedZip)
+    .on('close', function () {
+      console.log('Zip file saved!. Now uncompressing...');
+      exec("cd " + dataFolder + "; tar -xzf " + dataFolder + "exclusions.zip; mv " + dataFolder + "SAM*.CSV " + dataFolder + "exclusions.csv", function (error, stdout, stderr) {      // one easy function to capture data/errors
+          console.log('stdout: ' + stdout);
+          console.log('stderr: ' + stderr);
+          if (error !== null) {
+            console.log('exec error: ' + error);
+          }
+          console.log("Now parsing...");
+          parse();
+        });
+    });
+  }
+});
