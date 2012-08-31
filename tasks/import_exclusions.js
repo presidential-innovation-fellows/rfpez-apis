@@ -80,13 +80,15 @@ jsdom.env({
     .on('close', function () {
       console.log('Zip file saved!. Now uncompressing...');
       exec("cd " + dataFolder + "; tar -xzf " + dataFolder + "exclusions.zip; mv " + dataFolder + "SAM*.CSV " + dataFolder + "exclusions.csv", function (error, stdout, stderr) {      // one easy function to capture data/errors
-          console.log('stdout: ' + stdout);
-          console.log('stderr: ' + stderr);
+          console.log(stdout);
+          console.log(stderr);
           if (error !== null) {
             console.log('exec error: ' + error);
+            process.exit();
+          } else {
+            console.log("Now parsing...");
+            parse();
           }
-          console.log("Now parsing...");
-          parse();
         });
     });
   }
