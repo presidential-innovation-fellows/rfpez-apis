@@ -50,8 +50,9 @@ var parse = function(req, res) {
       var saveExclusions = function (exclusions) {
         var newExclusion = new Exclusion(exclusions.shift());
         newExclusion.save(function(){
-          console.log('saved!');
+          console.log('saved record.');
           if (exclusions.length > 0) {
+            console.log(exclusions.length + ' records remaining.');
             saveExclusions(exclusions);
           } else {
             process.exit();
