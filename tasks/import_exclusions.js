@@ -77,7 +77,7 @@ request('https://www.sam.gov/public-extracts/SAM-Public/', function (error, resp
     .pipe(savedZip)
     .on('close', function () {
       console.log('Zip file saved!. Now uncompressing...');
-      exec("cd " + dataFolder + "; tar -xzf " + dataFolder + "exclusions.zip; mv " + dataFolder + "SAM*.CSV " + dataFolder + "exclusions.csv", function (error, stdout, stderr) {      // one easy function to capture data/errors
+      exec("cd " + dataFolder + "; unzip " + dataFolder + "exclusions.zip; mv " + dataFolder + "SAM*.CSV " + dataFolder + "exclusions.csv", function (error, stdout, stderr) {      // one easy function to capture data/errors
           console.log(stdout);
           console.log(stderr);
           if (error !== null) {
