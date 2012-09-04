@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
   classification: String,
-  name: String,
+  name: {type: String, index: true},
   prefix: String,
   first: String,
   middle: String,
@@ -16,7 +16,7 @@ var schema = new mongoose.Schema({
   state_province: String,
   country: String,
   zip_code: String,
-  duns: String,
+  duns: {type: String, index: true},
   exclusion_program: String,
   exclusion_agency: String,
   ct_code: String,
