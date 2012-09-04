@@ -1,6 +1,6 @@
 var fs = require('fs')
   , csv = require('csv')
-  , jsdom = require('jsdom')
+  , cheerio = require('cheerio')
   , request = require('request')
   , mongoose = require('mongoose')
   , sys = require('sys')
@@ -65,14 +65,11 @@ var parse = function(req, res) {
 
 };
 
-jsdom.env({
-  html: 'https://www.sam.gov/public-extracts/SAM-Public/',
-  scripts: [
-    'http://code.jquery.com/jquery-1.5.min.js'
-  ],
-  done: function(errors, window) {
-    var $ = window.$;
-    var href = $('a:last').attr('href');
+request('https://www.sam.gov/public-extracts/SAM-Public/', function (error, response, body) {
+  if (!error && response.statusCode == 200) {
+    console.log(body);
+    var $ = cheerio.load(body);
+    var href = $('a').last().attr('href');
     console.log("Grabbing file: https://www.sam.gov/public-extracts/SAM-Public/" + href);
     var savedZip = fs.createWriteStream(dataFolder + 'exclusions.zip');
     request("https://www.sam.gov/public-extracts/SAM-Public/" + href)
