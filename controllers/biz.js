@@ -5,7 +5,7 @@ exports.index = function(req, res) {
 
   var page = parseInt(req.query.page, 10) || 1;
   var perPage = 10;
-  var query = Biz.apiQuery(req.query).limit(perPage).skip((page-1)*perPage).sort('name');
+  var query = Biz.apiQuery(req.query).limit(perPage).skip((page-1)*perPage); //.sort('name');
   var response = {};
 
   if (req.query.ne_lat) {
