@@ -67,11 +67,12 @@ var parse = function(req, res) {
 
 request('https://www.sam.gov/public-extracts/SAM-Public/', function (error, response, body) {
   if (!error && response.statusCode == 200) {
-    console.log(body);
     var $ = cheerio.load(body);
     var href = $('a').last().attr('href');
     console.log("Grabbing file: https://www.sam.gov/public-extracts/SAM-Public/" + href);
+    console.log("Writing temp zip file to " + dataFolder + 'exclusions.zip');
     var savedZip = fs.createWriteStream(dataFolder + 'exclusions.zip');
+
     request("https://www.sam.gov/public-extracts/SAM-Public/" + href)
     .pipe(savedZip)
     .on('close', function () {
