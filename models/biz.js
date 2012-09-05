@@ -4,7 +4,7 @@ var GeocodeCache = require('./geocode_cache');
 
 var bizSchema = new mongoose.Schema({
   user_id: {type: String, index: true},
-  name: String,
+  name: {type: String, index: true},
   address: String,
   address1: String,
   city: String,
