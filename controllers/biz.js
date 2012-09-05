@@ -10,7 +10,7 @@ exports.index = function(req, res) {
 
   if (req.query.ne_lat) {
     var box = [[parseFloat(req.query['sw_lng']), parseFloat(req.query['sw_lat'])], [parseFloat(req.query['ne_lng']),  parseFloat(req.query['ne_lat'])]];
-    query.within.box(box);
+    query = query.find({"latlon" : {"$within" : {"$box" : box}}})
   }
 
   query.exec(function (err, results) {
