@@ -3,8 +3,9 @@ var Biz = require('../models/biz');
 
 exports.index = function(req, res) {
 
-  var page = parseInt(req.query.page, 10) || 1;
-  var perPage = 10;
+  var page = parseInt(req.query.page) || 1;
+  var perPage = parseInt(req.query.per_page) || 10;
+  if (perPage > 100) perPage = 100;
   var query = Biz.apiQuery(req.query).limit(perPage).skip((page-1)*perPage); //.sort('name');
   var response = {};
 
