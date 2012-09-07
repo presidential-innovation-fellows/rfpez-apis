@@ -19,12 +19,7 @@ exports.index = function(req, res) {
     else {
       response.results = results;
       response.meta = {perPage: perPage, page: page};
-
-      query.count(function(err, count){
-        response.meta.count = count;
-        response.meta.totalPages = Math.ceil(count / perPage);
-        res.send(response);
-      });
+      res.send(response);
     }
   });
 };
