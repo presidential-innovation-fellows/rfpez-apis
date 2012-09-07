@@ -18,6 +18,7 @@ if (process.env.MONGOHQ_URL) {
 var app = express();
 
 app.configure(function(){
+  app.use(configHeaders);
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -43,8 +44,6 @@ function configHeaders(res, req, next) {
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
 }
-
-app.use(configHeaders);
 
 routes.init(app);
 
