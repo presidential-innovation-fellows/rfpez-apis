@@ -18,6 +18,7 @@
     "mongoose-api-query": "0.0.3",
     "csv": "*",
     "request": "~2.11.0",
-    "cheerio": "~0.9.2"
+    "cheerio": "~0.9.2",
+    "jsftp": "*"
   }
 }
