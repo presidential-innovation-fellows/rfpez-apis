@@ -24,8 +24,14 @@ conn.on('connect', function() {
 
       var files = new Array();
       for (var i=0,len=entries.length; i<len; ++i) {
-        if (entries[i].name.indexOf("FBOFeed2012") !== -1) {
-          files.push(entries[i]);
+        if (entries[i].name.indexOf("FBOFeed") !== -1) {
+          var onlyImportAfter = new Date(2012, 09, 01);
+          var matches = entries[i].name.match(/FBOFeed([0-9]{4})([0-9]{2})([0-9]{2})/);
+          var thisDate = new Date(matches[1], matches[2], matches[3]);
+
+          if (thisDate.getTime() >= onlyImportAfter.getTime()) {
+            files.push(entries[i]);
+          }
         }
       }
 
@@ -44,6 +50,7 @@ conn.on('connect', function() {
 
       var checkIfFilesHaveBeenImported = function (files, cb) {
         var file = files.shift();
+        if (!file || typeof file === 'undefined') cb();
 
         var alreadyImported = ImportedFBODump.findOne({name: file.name}, function(err, record){
           if (record === null) {
