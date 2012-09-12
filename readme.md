@@ -6,6 +6,7 @@ RFPEZ-APIs grabs the .csv and tab-delimited data dumps from the [DSBS](http://ds
 
 - DSBS: http://rfpez-apis.presidentialinnovationfellows.org/bizs
 - EPLS: http://rfpez-apis.presidentialinnovationfellows.org/exclusions
+- FBO: http://rfpez-apis.presidentialinnovationfellows.org/opportunities
 
 Live documentation: http://apidocs.presidentialinnovationfellows.org/
 
