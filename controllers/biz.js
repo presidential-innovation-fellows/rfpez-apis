@@ -3,10 +3,7 @@ var Biz = require('../models/biz');
 
 exports.index = function(req, res) {
 
-  var page = parseInt(req.query.page) || 1;
-  var perPage = parseInt(req.query.per_page) || 10;
-  if (perPage > 100) perPage = 100;
-  var query = Biz.apiQuery(req.query).limit(perPage).skip((page-1)*perPage); //.sort('name');
+  var query = Biz.apiQuery(req.query);
   var response = {};
 
   if (req.query.ne_lat) {
@@ -15,10 +12,14 @@ exports.index = function(req, res) {
   }
 
   query.exec(function (err, results) {
+    console.log()
     if (err) res.send({err:err});
     else {
       response.results = results;
-      response.meta = {perPage: perPage, page: page};
+      response.meta = {
+        perPage: query.options.limit,
+        page: (query.options.skip / query.options.limit) + 1
+      };
       res.send(response);
     }
   });
