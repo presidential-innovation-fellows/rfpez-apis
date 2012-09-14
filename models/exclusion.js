@@ -29,12 +29,14 @@ var exclusionSchema = new mongoose.Schema({
   sam_number: String
 });
 
+exclusionSchema.index({ first: 1, last: 1 });
+
 exclusionSchema.statics.nameSearch = function(name, cb) {
   var prefixes = /^\(?(dr|mr|ms|mrs|col|sgt|sergeant|cpt|captain|ltc|major|maj|chief|cwo|ssg|sfc)\)?\.?\s/i;
   var suffixes = /\s?(jr|sr|ii|iii|iv|v|esq|ph\.?d|m\.?d)\.?$/i;
   var cleanNameBits = name.replace(prefixes, '').replace(suffixes, '').split(" ");
-  var firstName = cleanNameBits.shift();
-  var lastName = cleanNameBits.pop();
+  var firstName = new RegExp(cleanNameBits.shift(), 'i');
+  var lastName = new RegExp(cleanNameBits.pop(), 'i');
   if (cb) {
     this.findOne({first:firstName, last:lastName}, cb);
   } else {
