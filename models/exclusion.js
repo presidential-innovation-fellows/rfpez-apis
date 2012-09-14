@@ -36,9 +36,9 @@ exclusionSchema.statics.nameSearch = function(name, cb) {
   var firstName = cleanNameBits.shift();
   var lastName = cleanNameBits.pop();
   if (cb) {
-    this.model.findOne({first:firstName, last:lastName}, cb);
+    this.findOne({first:firstName, last:lastName}, cb);
   } else {
-    return this.model.findOne({first:firstName, last:lastName});
+    return this.findOne({first:firstName, last:lastName});
   }
 };
 

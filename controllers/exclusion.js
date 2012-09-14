@@ -26,7 +26,6 @@ var index = exports.index = function(req, res) {
 };
 
 exports.searchParagraph = function(req, res) {
-  console.log(req.params.paragraph);
   request.get('http://50.17.218.115/text2people/%5B"' + req.params.paragraph + '"%5D')
   .end(function(json){
     if (json.ok) {
@@ -34,8 +33,9 @@ exports.searchParagraph = function(req, res) {
       var matches = [];
       var searchNames = function (names, cb) {
         var name = names.shift();
+        if (!name) return cb();
         Exclusion.nameSearch(name.matched_string, function(err, exclusion){
-          if (exclusion) matches.push(name);
+          if (exclusion) matches.push(exclusion);
           names.length === 0 ? cb() : searchNames(names, cb)
         });
       };
