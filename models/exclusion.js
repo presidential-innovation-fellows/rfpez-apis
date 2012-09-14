@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var schema = new mongoose.Schema({
+var exclusionSchema = new mongoose.Schema({
   classification: String,
   name: {type: String, index: true},
   prefix: String,
@@ -29,7 +29,19 @@ var schema = new mongoose.Schema({
   sam_number: String
 });
 
+exclusionSchema.statics.nameSearch = function(name, cb) {
+  var prefixes = /^\(?(dr|mr|ms|mrs|col|sgt|sergeant|cpt|captain|ltc|major|maj|chief|cwo|ssg|sfc)\)?\.?\s/i;
+  var suffixes = /\s?(jr|sr|ii|iii|iv|v|esq|ph\.?d|m\.?d)\.?$/i;
+  var cleanNameBits = name.replace(prefixes, '').replace(suffixes, '').split(" ");
+  var firstName = cleanNameBits.shift();
+  var lastName = cleanNameBits.pop();
+  if (cb) {
+    this.model.findOne({first:firstName, last:lastName}, cb);
+  } else {
+    return this.model.findOne({first:firstName, last:lastName});
+  }
+};
 
-schema.plugin(require('mongoose-api-query'));
+exclusionSchema.plugin(require('mongoose-api-query'));
 
-module.exports = DB.model('Exclusion', schema);
+module.exports = DB.model('Exclusion', exclusionSchema);
