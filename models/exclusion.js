@@ -26,7 +26,7 @@ var exclusionSchema = new mongoose.Schema({
   termination_date: String,
   record_status: String,
   cross_reference: String,
-  sam_number: String
+  sam_number: {type: String, index: true}
 });
 
 exclusionSchema.index({ first: 1, last: 1 });

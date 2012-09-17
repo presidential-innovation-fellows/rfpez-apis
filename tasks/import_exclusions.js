@@ -22,9 +22,6 @@ var mongooseKeyFor = function (key) {
 
 var parse = function(req, res) {
 
-  // empty database
-  Exclusion.collection.remove({});
-
   if (process.argv.indexOf('--sample-data') !== -1) {
     console.log("++++++++ USING SAMPLE DATA ++++++++");
     var csv_file = dataFolder + 'exclusions_sample.csv';
@@ -49,15 +46,27 @@ var parse = function(req, res) {
 
       var saveExclusions = function (exclusions) {
         var newExclusion = new Exclusion(exclusions.shift());
-        newExclusion.save(function(){
-          console.log('saved record.');
+        var runCb = function() {
           if (exclusions.length > 0) {
             console.log(exclusions.length + ' records remaining.');
             saveExclusions(exclusions);
           } else {
             process.exit();
           }
-        })
+        }
+
+        Exclusion.findOne({sam_number: newExclusion.sam_number}, function(err, exists){
+          if (exists) {
+            console.log('exclusion already exists.');
+            runCb();
+
+          } else {
+            newExclusion.save(function(){
+              console.log('saved record.');
+              runCb();
+            });
+          }
+        });
       }
 
       saveExclusions(exclusions);
