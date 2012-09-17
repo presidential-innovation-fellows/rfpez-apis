@@ -6,4 +6,5 @@ exports.init = function(app){
   app.get('/exclusions/searchparagraph/:paragraph', require('./controllers/exclusion').searchParagraph);
 
   app.get('/opportunities', require('./controllers/opportunity').index);
+  app.get('/opportunities/fbozombie/:solnbr', require('./controllers/fbo_zombie'));
 };
