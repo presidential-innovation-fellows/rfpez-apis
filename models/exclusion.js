@@ -25,7 +25,7 @@ var exclusionSchema = new mongoose.Schema({
   active_date: String,
   termination_date: String,
   record_status: String,
-  cross_reference: String,
+  cross_reference: {type: String, index: true},
   sam_number: {type: String, index: true}
 });
 
@@ -37,11 +37,10 @@ exclusionSchema.statics.nameSearch = function(name, cb) {
   var cleanNameBits = name.replace(prefixes, '').replace(suffixes, '').split(" ");
   var firstName = new RegExp(cleanNameBits.shift(), 'i');
   var lastName = new RegExp(cleanNameBits.pop(), 'i');
-  if (cb) {
-    this.findOne({first:firstName, last:lastName}, cb);
-  } else {
-    return this.findOne({first:firstName, last:lastName});
-  }
+
+  var results = this.find({ $or: [ {first:firstName, last:lastName}, {cross_reference: new RegExp(name, 'i')} ] });
+
+  return cb ? results.exec(cb) : results;
 };
 
 exclusionSchema.plugin(require('mongoose-api-query'));
