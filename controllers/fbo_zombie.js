@@ -18,7 +18,8 @@ module.exports = function(req, res) {
       classification_code: browser.text("#dnf_class_values_procurement_notice__classification_code__widget"),
       solnbr: browser.text(".sol-num").replace("Solicitation Number: ", ""),
       naics: [],
-      statement_of_work: browser.html("#dnf_class_values_procurement_notice__description__widget")
+      statement_of_work: browser.html("#dnf_class_values_procurement_notice__description__widget"),
+      raw_point_of_contact: browser.html("#dnf_class_values_procurement_notice__poc_text__widget")
     }
 
     var agencyNameBits = browser.query(".agency-name").innerHTML.split("<br />");
@@ -30,7 +31,8 @@ module.exports = function(req, res) {
     var naicsBits = browser.text("#dnf_class_values_procurement_notice__naics_code__widget").split("/");
 
     for (var i = 0, len = naicsBits.length; i < len; i++) {
-      json["naics"].push(naicsBits[i].match(/^[0-9]+/)[0])
+      var matches = naicsBits[i].match(/^[0-9]+/);
+      if (matches) json["naics"].push(matches[0]);
     }
 
     return json;
@@ -39,6 +41,8 @@ module.exports = function(req, res) {
   browser.visit("http://www.fbo.gov", function(){
     browser.fill("#qs-kw", req.params.solnbr)
     .pressButton("#qs-submit", function(){
+      var found = browser.query("#row_0 a");
+      if (!found) return res.send("Not found!");
       browser.clickLink("#row_0 a", function(){
         res.send(
           parsePage()
