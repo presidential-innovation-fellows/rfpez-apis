@@ -6,11 +6,6 @@ module.exports = function(req, res) {
 
   var parsePage = function(){
     var json = {
-      name: browser.text("#dnf_class_values_procurement_notice__primary_poc__widget div:nth-child(1)").replace(/,$/, ''),
-      title: browser.text("#dnf_class_values_procurement_notice__primary_poc__widget div:nth-child(2)"),
-      email: browser.text("#dnf_class_values_procurement_notice__primary_poc__widget div:nth-child(3)"),
-      phone: browser.text("#dnf_class_values_procurement_notice__primary_poc__widget div:nth-child(4)").replace('Phone: ', ''),
-
       posted_date: browser.text("#dnf_class_values_procurement_notice__posted_date__widget"),
       response_date: browser.text("#dnf_class_values_procurement_notice__response_deadline__widget"),
       set_aside: browser.text("#dnf_class_values_procurement_notice__set_aside__widget"),
@@ -18,9 +13,24 @@ module.exports = function(req, res) {
       classification_code: browser.text("#dnf_class_values_procurement_notice__classification_code__widget"),
       solnbr: browser.text(".sol-num").replace("Solicitation Number: ", ""),
       naics: [],
-      statement_of_work: browser.html("#dnf_class_values_procurement_notice__description__widget"),
-      raw_point_of_contact: browser.html("#dnf_class_values_procurement_notice__poc_text__widget")
+      statement_of_work: browser.html("#dnf_class_values_procurement_notice__description__widget")
     }
+
+    var poc = browser.text("#dnf_class_values_procurement_notice__primary_poc__widget");
+    console.log(poc);
+
+    if (!poc) poc = browser.text("#dnf_class_values_procurement_notice__poc_text__widget");
+    var emailMatch = poc.match(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i);
+    var phoneMatch = poc.replace(/\./g, '')
+                        .replace(/\-/g, '')
+                        .replace(/\)/g, '')
+                        .replace(/\(/g, '')
+                        .replace(/\s/g, '')
+                        .replace(/Fax: .*/, '')
+                        .match(/[0-9]{10,11}/);
+
+    if (emailMatch) json["email"] = emailMatch[0];
+    if (phoneMatch) json["phone"] = phoneMatch[0];
 
     var agencyNameBits = browser.query(".agency-name").innerHTML.split("<br />");
 
