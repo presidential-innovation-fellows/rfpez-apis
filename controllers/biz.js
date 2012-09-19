@@ -1,4 +1,3 @@
-var fs = require('fs');
 var Biz = require('../models/biz');
 
 exports.index = function(req, res) {
@@ -12,7 +11,6 @@ exports.index = function(req, res) {
   }
 
   query.exec(function (err, results) {
-    console.log()
     if (err) res.send({err:err});
     else {
       response.results = results;
