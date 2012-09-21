@@ -1,8 +1,8 @@
-var fs = require('fs')
+var fs = require('fs');
 var mongoose = require('mongoose');
 
 if (process.env.MONGOHQ_URL) {
-  global.DB = mongoose.createConnection(process.env.MONGOHQ_URL)
+  global.DB = mongoose.createConnection(process.env.MONGOHQ_URL);
 } else {
   global.DB = mongoose.createConnection('localhost', 'rfpez-apis');
 }
@@ -72,7 +72,9 @@ var parse = function() {
 
     importFromTxt(naics_file, function(doc, cb){
 
-      convertToBoolean(['naicsprimind', 'naicsgreenind', 'naicssmllbusind', 'naicsemrgsmllbusind'], doc);
+      var naicscerts = ['naicsprimind', 'naicsgreenind', 'naicssmllbusind', 'naicsemrgsmllbusind'];
+      convertToBoolean(naicscerts, doc);
+      naicscerts.push('naicsyrnmb');
 
       Biz.findOne({user_id: doc.user_id}, function(err, biz) {
         if (err) {
@@ -82,8 +84,33 @@ var parse = function() {
           console.log("NO BIZ MATCHES FOR " + doc.user_id + ". Moving on...");
           return cb();
         } else {
-          delete doc['user_id'];
-          biz.naics.push(doc);
+          var naicsExists = false;
+          for (var i=0, len = biz.naics.length; i<len; i++) {
+            if (biz.naics[i].naicscd === parseInt(doc.naicscd, 10)) {
+              naicsExists = i;
+              break;
+            }
+          }
+
+          if (naicsExists !== false) {
+            var certHasChanged = false;
+            doc.naicsyrnmb = parseInt(doc.naicsyrnmb, 10);
+            naicscerts.forEach(function(prop) {
+              if (biz.naics[naicsExists][prop] !== doc[prop]) {
+                certHasChanged = true;
+                biz.naics[naicsExists][prop] = doc[prop];
+              }
+            });
+
+            if (certHasChanged === false) {
+              return cb();
+            }
+
+          } else {
+            delete doc['user_id'];
+            biz.naics.push(doc);
+          }
+
           biz.save(function(err) {
             if (err) console.log("Error saving newBiz: " + err);
             console.log('naic saved user: ' + biz.user_id + ' naiccd: ' + doc.naicscd);
