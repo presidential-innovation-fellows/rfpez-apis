@@ -20,9 +20,8 @@
         formTimes[formId].duration = formTimes[formId].endTime.getTime() - formTimes[formId].startTime.getTime();
         //would ideally use POST and rely on CORS, but trying to place nice with ye olde browsers
         $.getJSON('/formtimer/create', formTimes[formId], function(data) {
-          console.log(data);
+          //console.log(data);
         });
-        e.preventDefault();
       }
     });
   };

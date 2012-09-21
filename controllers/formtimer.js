@@ -51,8 +51,47 @@ exports.create = function(req, res) {
 };
 
 exports.example = function(req, res) {
-  console.log("formtimer::example");
-  var testform = "<html><body><form id='myformid'><input name='test' /><select><option>One</option><option>Two</option></select><input type='submit' />";
-  testform += "</form><script src='/js/formtimer.js'></script></body></html>";
-  res.send(testform);
+  res.render('example');
+};
+
+exports.results = function(req, res) {
+  var formid = "http://" + req.headers.host + "/formtimer/example#myformid";
+  FormTimer.stats(formid, function(err, result){
+    if (err) {
+      res.send(err);
+    } else if (result.length === 0) {
+      res.send({"_id": formid, count:0});
+    } else {
+      var stats = result[0];
+      // stats =
+      // { _id: 'http://localhost:3000/formtimer/example#myformid',
+      // avgDuration: 4611.666666666667,
+      // minDuration: 4365,
+      // maxDuration: 4953,
+      // count: 3 }
+      FormTimer.find({form:formid}).sort('duration').exec(function(err, entries){
+
+        var maxDurRounded = Math.round(stats.maxDuration/1000);
+        var formtimerdata = [];
+        var tempHolder = {};
+
+        for (var i=0; i<maxDurRounded + 1; i++) {
+          formtimerdata.push([i.toString(), 0]);
+        }
+
+        entries.forEach(function(ent){
+          formtimerdata[ent.durationRounded.toString()][1]++;
+        });
+
+        formtimerdata.unshift(['', 'Seconds to Complete']);
+        var renderData = {
+          formtimerdata : formtimerdata,
+          stats : stats,
+          entries : entries
+        };
+        res.render('example_results', renderData);
+      });
+    }
+  });
+
 };

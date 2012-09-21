@@ -30,4 +30,8 @@ formtimerschema.statics.stats = function(form, cb){
     }, cb);
 };
 
+formtimerschema.virtual('durationRounded').get(function () {
+  return Math.round(this.duration/1000);
+});
+
 module.exports = DB.model('FormTimer', formtimerschema);
