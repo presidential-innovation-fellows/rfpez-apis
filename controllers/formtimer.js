@@ -45,8 +45,10 @@ exports.create = function(req, res) {
     ip: req.client.remoteAddress
   });
   ft.save(function(err){
-    if (err) console.log("ERROR: " , err);
-    res.send('OK');
+    if (err) {
+      console.log("ERROR: " , err);
+    }
+    res.send({result:'OK'});
   });
 };
 

@@ -1,6 +1,7 @@
 
 (function() {
   var formTimes = {};
+  var timerSent = false;
 
   var initFormTimer = function(){
 
@@ -14,14 +15,20 @@
     });
 
     $forms.on('submit', function(e){
+      if (timerSent) return true;
       var formId = $(e.target).attr('id');
       if (typeof formTimes[formId] !== 'undefined') {
+        e.preventDefault();
         formTimes[formId].endTime = new Date();
         formTimes[formId].duration = formTimes[formId].endTime.getTime() - formTimes[formId].startTime.getTime();
         //would ideally use POST and rely on CORS, but trying to place nice with ye olde browsers
+        timerSent = true;
         $.getJSON('/formtimer/create', formTimes[formId], function(data) {
-          //console.log(data);
+          $(e.target).submit();
         });
+        return false;
+      } else {
+        return true;
       }
     });
   };
