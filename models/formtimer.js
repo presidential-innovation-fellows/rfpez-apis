@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-mongoose.set('debug', true);
+
 var formtimerschema = new mongoose.Schema({
   form: { type: String, index: true },
   duration: Number,
