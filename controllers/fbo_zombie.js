@@ -12,8 +12,6 @@ module.exports = function(req, res) {
       original_set_aside: browser.text("#dnf_class_values_procurement_notice__original_set_aside__widget"),
       classification_code: browser.text("#dnf_class_values_procurement_notice__classification_code__widget"),
       solnbr: browser.text(".sol-num").replace("Solicitation Number: ", ""),
-      naics: [],
-      statement_of_work: browser.html("#dnf_class_values_procurement_notice__description__widget")
       title: browser.text(".agency-header h2"),
       statement_of_work: browser.html("#dnf_class_values_procurement_notice__description__widget"),
     }
@@ -40,12 +38,8 @@ module.exports = function(req, res) {
     if (agencyNameBits[1]) json["office"] = agencyNameBits[1].replace('Office: ', '');
     if (agencyNameBits[2]) json["location"] = agencyNameBits[2].replace('Location: ', '');
 
-    var naicsBits = browser.text("#dnf_class_values_procurement_notice__naics_code__widget").split("/");
-
-    for (var i = 0, len = naicsBits.length; i < len; i++) {
-      var matches = naicsBits[i].match(/^[0-9]+/);
-      if (matches) json["naics"].push(matches[0]);
-    }
+    var naics = browser.text("#dnf_class_values_procurement_notice__naics_code__widget").match(/[0-9]{6}/);
+    if (naics[0]) json["naics"] = naics[0];
 
     return json;
   }
