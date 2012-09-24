@@ -14,6 +14,8 @@ module.exports = function(req, res) {
       solnbr: browser.text(".sol-num").replace("Solicitation Number: ", ""),
       naics: [],
       statement_of_work: browser.html("#dnf_class_values_procurement_notice__description__widget")
+      title: browser.text(".agency-header h2"),
+      statement_of_work: browser.html("#dnf_class_values_procurement_notice__description__widget"),
     }
 
     var poc = browser.text("#dnf_class_values_procurement_notice__primary_poc__widget");
