@@ -15,7 +15,7 @@ var bizSchema = new mongoose.Schema({
   fax: String,
   cdist: String,
   msa: String,
-  duns: String,
+  duns: {type: String, index: true},
   cage: String,
   yrest: String,
   contact: String,
