@@ -40,7 +40,7 @@ module.exports = function(req, res) {
     if (agencyNameBits[2]) json["location"] = agencyNameBits[2].replace('Location: ', '');
 
     var naics = browser.text("#dnf_class_values_procurement_notice__naics_code__widget").match(/[0-9]{6}/);
-    if (naics[0]) json["naics"] = naics[0];
+    if (naics && naics[0]) json["naics"] = naics[0];
 
     return json;
   }
