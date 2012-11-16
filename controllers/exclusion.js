@@ -10,7 +10,7 @@ var index = exports.index = function(req, res) {
     if (err) res.send({err:err});
     else if (results.length === 0 && typeof req.query.first === 'undefined' && typeof req.query.name !== 'undefined') {
       Exclusion.nameSearch(req.query.name, function(err, exclusion){
-        response.results = [exclusion];
+        response.results = exclusion;
         if (exclusion) response.meta = {count: 1};
         else response.meta = {count: 0};
         res.send(response);
