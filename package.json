@@ -16,7 +16,7 @@
     "mongoose": ">=3.1.1",
     "superagent": "~0.9.0",
     "mongoose-api-query": "0.0.6",
-    "csv": "*",
+    "csv": "0.2.4",
     "request": "~2.11.0",
     "cheerio": "~0.9.2",
     "ftp": "*",
