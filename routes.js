@@ -14,4 +14,6 @@ exports.init = function(app){
   app.get('/formtimer/create', require('./controllers/formtimer').create);
   app.get('/formtimer/example', require('./controllers/formtimer').example);
   app.get('/formtimer/example/results', require('./controllers/formtimer').results);
+
+  app.get('/awards', require('./controllers/fpds'));
 };
